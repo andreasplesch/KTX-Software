@@ -43,8 +43,10 @@ namespace ktx
             // Load the image data now, otherwise we'd have to  copy it from
             // JS into a buffer only for it to be copied from that buffer into
             // the texture later.
-            ktxTexture* ptr = nullptr;
-            KTX_error_code result = ktxTexture_CreateFromMemory(
+            //ktxTexture* ptr = nullptr;
+            ktxTexture2* ptr = nullptr;
+            //KTX_error_code result = ktxTexture_CreateFromMemory(
+            KTX_error_code result = ktxTexture2_CreateFromMemory(
                                         bytes.data(),
                                         bytes.size(),
                                         KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT,
@@ -70,7 +72,8 @@ namespace ktx
 
         bool needsTranscoding() const
         {
-            return ktxTexture_NeedsTranscoding(m_ptr.get());
+            //return ktxTexture_NeedsTranscoding(m_ptr.get());
+            return ktxTexture2_NeedsTranscoding(ktxTexture2(m_ptr.get()));
         }
 
         bool isPremultiplied() const
@@ -138,38 +141,45 @@ namespace ktx
         // NOTE: WebGLTexture objects are completely opaque so the option of passing in the texture
         // to use is not viable. Unknown at present is how to find the WebGLTexture for the texture
         // created by ktxTexture_GLUpload via the Emscripten OpenGL ES emulation.
-        emscripten::val glUpload()
-        {
-            GLuint texname = 0;
-            GLenum target = 0;
-            GLenum error = 0;
-            KTX_error_code result = ktxTexture_GLUpload(m_ptr.get(), &texname, &target, &error);
-            if (result != KTX_SUCCESS)
-            {
-                std::cout << "ERROR: Failed to GL upload: " << ktxErrorString(result) << std::endl;
-            }
+        // emscripten::val glUpload()
+        // {
+        //     GLuint texname = 0;
+        //     GLenum target = 0;
+        //     GLenum error = 0;
+        //     // KTX_error_code result = ktxTexture_GLUpload(m_ptr.get(), &texname, &target, &error);
+        //     // KTX_error_code result = ktxTexture2_GLUpload(m_ptr.get(), &texname, &target, &error);
+        //     if (result != KTX_SUCCESS)
+        //     {
+        //         std::cout << "ERROR: Failed to GL upload: " << ktxErrorString(result) << std::endl;
+        //     }
 
-            val ret = val::object();
-            // Find the WebGLTexture for texture.
-            val texture = val::module_property("GL")["textures"][texname];
-            ret.set("texture", texture);
-            ret.set("target", target);
-            ret.set("error", error);
-            return ret;
-        }
+        //     val ret = val::object();
+        //     // Find the WebGLTexture for texture.
+        //     val texture = val::module_property("GL")["textures"][texname];
+        //     ret.set("texture", texture);
+        //     ret.set("target", target);
+        //     ret.set("error", error);
+        //     return ret;
+        // }
 
     private:
-        texture(ktxTexture* ptr)
+        //texture(ktxTexture* ptr)
+        texture(ktxTexture2* ptr)
             : m_ptr{ ptr, &destroy }
         {
         }
 
-        static void destroy(ktxTexture* ptr)
+        // static void destroy(ktxTexture* ptr)
+        // {
+        //     ktxTexture_Destroy(ptr);
+        // }
+        static void destroy(ktxTexture2* ptr)
         {
-            ktxTexture_Destroy(ptr);
+            ktxTexture2_Destroy(ptr);
         }
 
-        std::unique_ptr<ktxTexture, decltype(&destroy)> m_ptr;
+        //std::unique_ptr<ktxTexture, decltype(&destroy)> m_ptr;
+        std::unique_ptr<ktxTexture2, decltype(&destroy)> m_ptr;
     };
 }
 
@@ -501,6 +511,6 @@ EMSCRIPTEN_BINDINGS(ktx)
         .property("supercompressScheme", &ktx::texture::supercompressionScheme)
         .property("vkFormat", &ktx::texture::vkFormat)
         .function("transcodeBasis", &ktx::texture::transcodeBasis)
-        .function("glUpload", &ktx::texture::glUpload)
+        // .function("glUpload", &ktx::texture::glUpload)
     ;
 }

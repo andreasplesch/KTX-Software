@@ -581,6 +581,20 @@ macro(common_libktx_settings target enable_write library_type)
             # Don't support higher quality mode to avoid 64k table.
             BASISD_SUPPORT_ASTC_HIGHER_OPAQUE_QUALITY=0
             KTX_OMIT_VULKAN=1
+            #AP
+            BASISD_SUPPORT_UASTC=1
+            BASISD_SUPPORT_DXT1=0
+            BASISD_SUPPORT_DXT5A=0
+            BASISD_SUPPORT_BC7=0
+            BASISD_SUPPORT_BC7_MODE5=0
+            BASISD_SUPPORT_PVRTC1=0
+            BASISD_SUPPORT_ETC2_EAC_A8=0
+            BASISD_SUPPORT_ASTC=1
+            #BASISD_SUPPORT_ATC
+            #BASISD_SUPPORT_ASTC_HIGHER_OPAQUE_QUALITY
+            BASISD_SUPPORT_ETC2_EAC_RG11=0
+            BASISD_SUPPORT_FXT1=0
+            #BASISD_SUPPORT_PVRTC2
         )
     endif()
 
